@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="toko_ol_pembeli/app" />
+      <module fileurl="file://$PROJECT_DIR$/toko_ol_pembeli.iml" filepath="$PROJECT_DIR$/toko_ol_pembeli.iml" group="toko_ol_pembeli" />
+    </modules>
+  </component>
+</project>
