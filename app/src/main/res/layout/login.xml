@@ -24,7 +24,7 @@
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:src="@drawable/pakpaklogo"
+                android:src="@drawable/logo_ewarung"
                 android:layout_centerInParent="true"
                 />
 
@@ -59,11 +59,11 @@
 
 
                 <EditText
-                    android:id="@+id/NIP"
+                    android:id="@+id/no_hp"
                     style="@style/Widget.AppCompat.EditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="NIP"
+                    android:hint="No HP"
                     android:inputType="number"
                     android:padding="20dp"
                     android:text=""
@@ -106,6 +106,36 @@
                     android:layout_height="wrap_content"
                     android:text="Masuk" />
             </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="Atau"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            >
+
+            <Button
+                android:id="@+id/btnDaftar"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Daftar" />
+        </LinearLayout>
 
 
 

@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -17,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -87,7 +89,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import medantechno.com.tokohh.config.Config;
 import medantechno.com.tokohh.database.DbLokasi;
-import medantechno.com.tokohh.database.DbUser;
 import medantechno.com.tokohh.model.ModelLokasi;
 import medantechno.com.tokohh.model.ModelUser;
 
@@ -146,85 +147,6 @@ public class MainActivity extends AppCompatActivity
         });
         */
 
-        /****** cek paket terinstall ******/
-        final PackageManager pm = getPackageManager();
-        List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-        for (ApplicationInfo packageInfo : packages) {
-            Log.d(TAG, "Installed package :" + packageInfo.packageName);
-            Log.d(TAG, "Source dir : " + packageInfo.sourceDir);
-            Log.d(TAG, "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
-
-            String x = packageInfo.packageName.toString();
-            if(x.indexOf("fake")!=-1 || x.indexOf("gps")!=-1 || x.indexOf("fakelocation")!=-1 || x.indexOf("spoof")!=-1 || x.indexOf("cleverspg")!=-1 || x.indexOf("mock")!=-1 || x.indexOf("locationchanger")!=-1)
-            {
-                //Toast.makeText(getApplicationContext(),"Peringatan. Hapus dulu app "+x,Toast.LENGTH_LONG).show();
-                haram.add(x);
-            }
-
-        }
-        /****** cek paket terinstall ******/
-
-        /*** ambil gps lolos dari db ***/
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-        JsonArrayRequest sptRequest = new JsonArrayRequest(Config.StringUrl.gps_lolos,new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                System.out.println("gps_lolos:"+response);
-                // Parsing json
-
-                for (int i = 0; i < response.length(); i++) {
-
-                    try {
-                        JSONObject obj = response.getJSONObject(i);
-                        System.out.println("paketnya:"+obj.getString("paket"));
-                        gpsBawaan.add(obj.getString("paket"));
-
-                        if(haram.contains(obj.getString("paket")))
-                        {
-                            haram.remove(obj.getString("paket"));
-                        }
-
-                    }catch (Exception e){
-
-                    }
-
-                    System.out.println("list_bawaan_sebelum:"+haram);
-                    if(i+1==response.length()){
-                        System.out.println("list_bawaan:"+haram);
-                        all_haram="";
-                        for(String h : haram)
-                        {
-                            all_haram+=h+"\n";
-                        }
-
-                        TextView warning_fake = (TextView)findViewById(R.id.warning_fake);
-                        warning_fake.setText("Peringatan !!! HP anda terdeteksi fake GPS. Silahkan hapus dulu untuk melanjutkan!!! \n"+all_haram);
-                        if(haram.size()>0)
-                        {
-                            warning_fake.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        queue.add(sptRequest);
-
-        /*** ambil gps lolos dari db ***/
-
-
-
-        /******* ceking fake gps *********/
-       // new CekAplikasiHaram().execute("");
-        /******* ceking fake gps *********/
-
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -245,23 +167,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
-        /**************** cek dulu database apakah sudah pernah login **********/
-        DbUser dbUser = new DbUser(getApplicationContext());
-        try{
-            ModelUser modelUser = dbUser.select_by_terbesar();
-
-            NIP = modelUser.getNIP();
-            nama = modelUser.getNama();
-            jabatan = modelUser.getJabatan();
-            id_user = modelUser.getId_user();
-            gambar = modelUser.getGambar();
-            id_opd = modelUser.getId_opd();
-
-        }catch (Exception x) {
-
-        }
-        /**************** cek dulu database apakah sudah pernah login **********/
 
         View headerView = navigationView.getHeaderView(0);
         TextView namanya = (TextView) headerView.findViewById(R.id.v_nama);
@@ -339,7 +244,11 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
 
-            new DbUser(getApplicationContext()).hapus();
+            /*** menghapus session ***/
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            sharedPreferences.edit().clear().commit();
+            /*** menghapus session ***/
+
             finish();
             return true;
         }
@@ -356,8 +265,6 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_history_absen) {
             // Handle the camera action
 
-            Intent go_absen = new Intent(getApplicationContext(),HistoryAbsenActivity.class);
-            startActivity(go_absen);
 
 
         } else if (id == R.id.nav_interface) {
@@ -366,44 +273,29 @@ public class MainActivity extends AppCompatActivity
             System.out.println("Abc");
         }
         else if (id == R.id.nav_sibahanpe) {
-            Intent go_sibahan = new Intent(getApplicationContext(), SibahanpeActivity.class);
-            startActivity(go_sibahan);
-            System.out.println("Abc");
-            //reqUrl("https://sibahanpe.pakpakbharatkab.go.id/sibahanpe/index.php/curl_vote/go");
+
         }
         else if (id == R.id.nav_lap_sibahanpe) {
-            Intent go_lap_sibahan = new Intent(getApplicationContext(),LapSibahanpe.class);
-            startActivity(go_lap_sibahan);
-            System.out.println("Abc");
+
         }
 
         else if (id == R.id.nav_dinas_luar) {
-            Intent go_d = new Intent(getApplicationContext(),DinasLuar.class);
-            startActivity(go_d);
-            System.out.println("Abc");
+
         }
 
         else if (id == R.id.nav_cuti_sakit) {
-            Intent go_cs = new Intent(getApplicationContext(),CutiSakit.class);
-            startActivity(go_cs);
-            System.out.println("Abc");
+
         }
 
         else if (id == R.id.nav_cuti_lain) {
-            Intent go_cl = new Intent(getApplicationContext(),CutiLain.class);
-            startActivity(go_cl);
-            System.out.println("Abc");
+
         }
         else if (id == R.id.nav_ket_sah) {
-            Intent go_ks = new Intent(getApplicationContext(),KetSah.class);
-            startActivity(go_ks);
-            System.out.println("Abc");
+
         }
 
         else if (id == R.id.nav_cuti_tahunan) {
-            Intent go_ct = new Intent(getApplicationContext(),CutiTahunan.class);
-            startActivity(go_ct);
-            System.out.println("Abc");
+
         }
 
 
@@ -813,66 +705,6 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    public void reqUrl(String url)
-    {
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading...");
-        pDialog.show();
-
-
-            try {
-                RequestQueue requestQueue = Volley.newRequestQueue(this);
-                //http://eotm.pakpakbharatkab.go.id/index.php/curl_sibahanpe/go
-                //https://sibahanpe.pakpakbharatkab.go.id/sibahanpe/index.php/curl_vote/go
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.i("VOLLEY", response);
-                        reqUrl("http://eotm.pakpakbharatkab.go.id/index.php/curl_sibahanpe/go");
-                        hidePDialog();
-
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("VOLLEY", error.toString());
-                        hidePDialog();
-
-                    }
-                }) {
-                    @Override
-                    public String getBodyContentType() {
-                        return "application/json; charset=utf-8";
-                    }
-
-                    @Override
-                    public byte[] getBody() throws AuthFailureError {
-
-                        return null;
-                    }
-
-                };
-
-                requestQueue.add(stringRequest);
-
-                /** mengatur time out volley***/
-                stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                        50000,
-                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                /** mengatur time out volley***/
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(getApplicationContext(),"Nampaknya ada masalah. Pastikan jaringan anda bagus."+e.toString(),Toast.LENGTH_LONG).show();
-
-            }
-
-
-    }
-
 
     @Override
     public void onDestroy() {
@@ -887,88 +719,4 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-    private class CekAplikasiHaram extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            final PackageManager pm = getPackageManager();
-            List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-
-            for (ApplicationInfo packageInfo : packages) {
-                Log.d(TAG, "Installed package :" + packageInfo.packageName);
-                Log.d(TAG, "Source dir : " + packageInfo.sourceDir);
-                Log.d(TAG, "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
-
-                String y;
-                try {
-                    y = packageInfo.loadLabel(pm).toString();
-                }catch (Exception e)
-                {
-                    y ="";
-                }
-
-
-
-
-                String x = packageInfo.packageName.toString();
-                if(x.indexOf("fake")!=-1 || x.indexOf("gps")!=-1 || x.indexOf("fakelocation")!=-1 || x.indexOf("spoof")!=-1 || x.indexOf("cleverspg")!=-1 || x.indexOf("mock")!=-1 || x.indexOf("locationchanger")!=-1)
-                {
-                    //Toast.makeText(getApplicationContext(),"Peringatan. Hapus dulu app "+y,Toast.LENGTH_LONG).show();
-                    haram.add(x);
-                    /*
-                    if(x.equals("com.oppo.factorygps") || x.equals("com.mediatek.ygps") || x.equals("com.lenovo.anyshare.gps") || x.equals("com.gpstrack.mapsnavigation.location"))
-                    {
-                        haram.remove(x);
-                    }
-                    */
-
-
-
-                }
-
-
-                if(gpsBawaan.contains(x)){
-                    System.out.println("udah_hapus:"+x);
-                    haram.remove(x);
-                }
-
-
-
-            }
-            all_haram="";
-
-            for(String h : haram)
-            {
-                all_haram+=h+"\n";
-            }
-
-
-
-
-
-            return "Executed";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            System.out.println("Siap di eksekusi");
-            // might want to change "executed" for the returned string passed
-            // into onPostExecute() but that is upto you
-            TextView warning_fake = (TextView)findViewById(R.id.warning_fake);
-            warning_fake.setText("Peringatan !!! HP anda terdeteksi fake GPS. Silahkan hapus dulu untuk melanjutkan!!! \n"+all_haram);
-            if(haram.size()>0)
-            {
-                warning_fake.setVisibility(View.VISIBLE);
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {}
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
-    }
 }

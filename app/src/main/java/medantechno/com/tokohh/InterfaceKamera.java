@@ -111,7 +111,6 @@ import java.util.UUID;
 
 import butterknife.ButterKnife;
 import medantechno.com.tokohh.config.Config;
-import medantechno.com.tokohh.database.DbUser;
 import medantechno.com.tokohh.model.ModelUser;
 
 
@@ -275,17 +274,6 @@ public class InterfaceKamera extends AppCompatActivity
         //new CekAplikasiHaram().execute("");
         /****** cek fake gps *******/
 
-        /**************** cek dulu database apakah sudah pernah login **********/
-        DbUser dbUser = new DbUser(getApplicationContext());
-        ModelUser modelUser = dbUser.select_by_terbesar();
-        NIP = modelUser.getNIP();
-        nama = modelUser.getNama();
-        jabatan = modelUser.getJabatan();
-        id_pegawai = String.valueOf(modelUser.getId_user());
-        fid = modelUser.getFid();
-        id_opd = modelUser.getId_opd();
-        /**************** cek dulu database apakah sudah pernah login **********/
-
 
         /******** membuat back button *******/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -303,7 +291,6 @@ public class InterfaceKamera extends AppCompatActivity
         mInputPhotonya1 = (EditText)findViewById(R.id.inputPhotonya1);
 
         mNip = (EditText) findViewById(R.id.nip);
-        mJudulSpt = (TextView) findViewById(R.id.judul_spt);
 
         mNip.setEnabled(false);
 
@@ -537,14 +524,7 @@ public class InterfaceKamera extends AppCompatActivity
                         String encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
                         mInputPhotonya1.setText(encodedImage);
 
-                        /** menjadikan foto profil otomatis terakhir**/
-                        DbUser dbUser = new DbUser(getApplicationContext());
-                        ModelUser modelUser = new ModelUser();
-                        modelUser.setGambar(mCurrentPhotoPath);
-                        modelUser.setNIP(NIP);
-                        dbUser.updateGambar(modelUser);
-                        System.out.println(mCurrentPhotoPath+"-gambar");
-                        /** menjadikan foto profil otomatis terakhir**/
+
 
                     } else {
                         Log.d("xxx", "tidaak ada");
@@ -802,8 +782,8 @@ public class InterfaceKamera extends AppCompatActivity
 
 
                         finish();
-                        Intent i = new Intent(getApplicationContext(),HistoryAbsenActivity.class);
-                        startActivity(i);
+                        //Intent i = new Intent(getApplicationContext(),HistoryAbsenActivity.class);
+                        //startActivity(i);
 
 
                     }

@@ -21,7 +21,7 @@ public class Config {
         //public static final String tampung_base54 = "https://ujicoba.pakpakbharatkab.go.id/lokasi/tampung_base64.php";
 
 
-        public static final String cek_login = "https://sibahanpe.pakpakbharatkab.go.id/api/login_android.php";
+        public static final String cek_login = "http://ewarung.humbanghasundutankab.go.id/index.php/pembeli/api/cek_login";
 
         public static final String tampung_base54 = "https://sibahanpe.pakpakbharatkab.go.id/v4/index.php/api/simpan_absensi_base64";
 

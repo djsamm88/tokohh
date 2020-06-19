@@ -3,7 +3,9 @@ package medantechno.com.tokohh;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,8 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import medantechno.com.tokohh.config.Config;
-import medantechno.com.tokohh.database.DbUser;
-import medantechno.com.tokohh.model.ModelUser;
 
 /**
  * Created by dinaskominfokab.pakpakbharat on 27/09/18.
@@ -30,8 +30,8 @@ import medantechno.com.tokohh.model.ModelUser;
 
 public class Login extends Activity {
 
-    EditText mNIP,mPassword;
-    Button mBtnGo;
+    EditText mNohp,mPassword;
+    Button mBtnGo,btnDaftar;
     private ProgressDialog pDialog;
 
 
@@ -40,23 +40,43 @@ public class Login extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        mNIP = (EditText) findViewById(R.id.NIP);
+        mNohp = (EditText) findViewById(R.id.no_hp);
         mPassword = (EditText) findViewById(R.id.password);
         mBtnGo = (Button) findViewById(R.id.btnGo);
+        btnDaftar = (Button) findViewById(R.id.btnDaftar);
+        btnDaftar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goDaftar = new Intent(getApplicationContext(),Daftar.class);
+                startActivity(goDaftar);
+            }
+        });
 
+        /***** mengambil session ***/
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String UserName = preferences.getString("UserID", "");
+        String NoTelp = preferences.getString("NoTelp", "");
+        System.out.println("isi_session:"+UserName+"-"+NoTelp);
+        /***** mengambil session ***/
 
+        if(!NoTelp.equals(""))
+        {
+            Intent directHome = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(directHome);
+            finish();
+        }
 
         mBtnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                String NIP = mNIP.getText().toString();
+                String NIP = mNohp.getText().toString();
                 String password = mPassword.getText().toString();
 
                 //Log.d("Login.javaa","login:"+NIP+"&"+password);
                 if(NIP.equals("") || password.equals(""))
                 {
-                    Toast.makeText(getApplicationContext(),"NIP dan Password harus diisi",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"No HP dan Password harus diisi",Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -66,45 +86,22 @@ public class Login extends Activity {
         });
 
 
-        /**************** cek dulu database apakah sudah pernah login **********/
-        DbUser dbUser = new DbUser(getApplicationContext());
-        try{
-            ModelUser modelUser = dbUser.select_by_terbesar();
-
-            Log.d("dariDb","hasil:"+modelUser.getNIP()+","+modelUser.getPassword());
-
-            mNIP.setText(modelUser.getNIP());
-            mPassword.setText(modelUser.getPassword());
-
-            Intent i = new Intent(Login.this,MainActivity.class);
-            i.putExtra("NIP",modelUser.getNIP());
-            i.putExtra("nama",modelUser.getNama());
-            i.putExtra("jabatan",modelUser.getJabatan());
-            i.putExtra("id_user",String.valueOf(modelUser.getId_user()));
-            startActivity(i);
-            finish();
-
-        }catch (Exception x) {
-
-        }
-        /**************** cek dulu database apakah sudah pernah login **********/
-
     }
 
 
 
-    private void panggilJson(String NIP, String password)
+    private void panggilJson(String NIP, String Password)
     {
 
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-        final String pass = password;
+        final String pass = Password;
 
         // prepare the Request
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = Config.StringUrl.cek_login+"?NIP="+NIP+"&password="+password;
+        String url = Config.StringUrl.cek_login+"?NoTelp="+NIP+"&Password="+Password;
 
         System.out.println(url);
 
@@ -115,87 +112,51 @@ public class Login extends Activity {
             public void onResponse(JSONArray response) {
                 // display response
                 System.out.println("jumlah:"+response.length());
-                hidePDialog();
+                if(response.length()>0)
+                {
+                    Toast.makeText(getApplicationContext(),"Berhasil Login. Mohon tunggu...",Toast.LENGTH_SHORT).show();
 
-                    /*
                     try {
                         JSONObject hasil = response.getJSONObject(0);
+                        System.out.println(hasil.getString("UserID"));
 
-                        final int jumlah = Integer.parseInt(hasil.getString("count"));
-                        if(jumlah>0)
-                        {
-                            System.out.println(hasil.getString("count"));
-                        }else{
-                            System.out.println("Hasil <= 0");
-                        }
+                        /*** memasukkan ke session ***/
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("UserID",hasil.getString("UserID"));
+                        editor.putString("Password",hasil.getString("Password"));
+                        editor.putString("RoleID",hasil.getString("RoleID"));
+                        editor.putString("LasLogin",hasil.getString("LasLogin"));
+                        editor.putString("IsSuspend",hasil.getString("IsSuspend"));
+                        editor.putString("Email",hasil.getString("Email"));
+                        editor.putString("Nama",hasil.getString("Nama"));
+                        editor.putString("NIK",hasil.getString("NIK"));
+                        editor.putString("NoTelp",hasil.getString("NoTelp"));
+                        editor.putString("Alamat",hasil.getString("Alamat"));
+                        editor.putString("TanggalLahir",hasil.getString("TanggalLahir"));
+                        editor.putString("Foto",hasil.getString("Foto"));
+                        editor.putString("FotoKTP",hasil.getString("FotoKTP"));
+                        editor.putString("FotoKTP2",hasil.getString("FotoKTP2"));
+                        editor.putString("TanggalRegistrasi",hasil.getString("TanggalRegistrasi"));
+                        editor.putString("IsEmailVerified",hasil.getString("IsEmailVerified"));
+
+                        editor.apply();
+                        /*** memasukkan ke session ***/
+
+                        finish();
+                        Intent ii = new Intent(getApplicationContext(),MainActivity.class);
+                        startActivity(ii);
+
                     }catch (Exception x)
                     {
-
+                        System.out.println("error_preferenced:"+x);
                     }
-                    */
 
-
-                        try {
-
-                            JSONObject obj = response.getJSONObject(0);
-
-
-                                final int jumlah = Integer.parseInt(obj.getString("count"));
-                                if(jumlah>0)
-                                {
-                                    ModelUser modelUser = new ModelUser();
-                                    //modelUser.setId_user(Integer.parseInt(obj.getString("FID")));
-                                    modelUser.setNama(obj.getString("NAMA"));
-                                    modelUser.setJabatan(obj.getString("JABATAN"));
-                                    modelUser.setNIP(obj.getString("NIP"));
-                                    modelUser.setPassword(obj.getString("COSTUM_2"));
-                                    modelUser.setFid(obj.getString("FID"));
-                                    modelUser.setId_opd(obj.getString("ID_OPD"));
-
-                                    if(pass.equals(obj.getString("COSTUM_2")))
-                                    {
-                                        try {
-                                            new DbUser(getApplicationContext()).insert(modelUser);
-                                        }catch (Exception x)
-                                        {
-                                            try {
-                                                new DbUser(getApplicationContext()).update(modelUser);
-                                            }catch (Exception o)
-                                            {
-                                                System.out.println(o);
-                                            }
-                                            System.out.println(x);
-                                        }
-
-
-                                        /*********** direk ke beranda ***********/
-                                        Intent intent = new Intent(Login.this,MainActivity.class);
-                                        intent.putExtra("NIP",modelUser.getNIP());
-                                        intent.putExtra("nama",modelUser.getNama());
-                                        intent.putExtra("jabatan",modelUser.getJabatan());
-                                        //intent.putExtra("id_user",String.valueOf(modelUser.getId_user()));
-                                        intent.putExtra("fid",modelUser.getFid());
-
-                                        startActivity(intent);
-                                        finish();
-                                        /**********************************************/
-                                    }else{
-                                        Toast.makeText(getApplicationContext(),"Password salah.",Toast.LENGTH_SHORT).show();
-                                    }
-
-                                }else{
-                                    Toast.makeText(getApplicationContext(),"NIP salah.",Toast.LENGTH_SHORT).show();
-                                }
-
-
-
-
-                            }catch (Exception e)
-                            {
-                                Log.d("error_simpan","aaa-"+e.toString());
-
-                            }
-
+                }else{
+                    Toast.makeText(getApplicationContext(),"Gagal login, No HP Atau password salah...",Toast.LENGTH_SHORT).show();
+                }
+                System.out.println("hasil:"+response);
+                hidePDialog();
 
 
             }
