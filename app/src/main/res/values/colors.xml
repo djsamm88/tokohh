@@ -183,4 +183,6 @@
     <!-- FloatingToolbar -->
     <color name="floating_popup_divider_dark">#2F2F2F</color>
     <color name="floating_popup_divider_light">#E9E9E9</color>
+    <color name="kuning">#ffc93d</color>
+    <color name="border">#DEDEDE</color>
 </resources>

@@ -48,7 +48,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/lnNip"
                 android:layout_marginBottom="20dp"
                 >
 
@@ -81,7 +80,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nama"
-                android:inputType="number"
                 android:padding="20dp"
                 android:text=""
                 />
@@ -102,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
-                android:inputType="number"
+                android:inputType="textEmailAddress"
                 android:padding="20dp"
                 android:text=""
                 />
@@ -142,7 +140,7 @@
                 style="@style/Widget.AppCompat.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:inputType="text"
                 android:padding="20dp"
                 android:hint="Alamat"
                 />
@@ -162,9 +160,9 @@
                 style="@style/Widget.AppCompat.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:padding="20dp"
                 android:hint="TanggalLahir"
+                android:focusable="false"
                 />
 
         </LinearLayout>
@@ -175,7 +173,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="0dp"
             >
 
 
@@ -184,10 +182,12 @@
                 style="@style/Widget.AppCompat.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:maxLines="1"
                 android:padding="20dp"
                 android:hint="Foto Profil"
-                />
+
+
+            />
 
         </LinearLayout>
 
@@ -198,6 +198,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
+            >
+
+
+
+            <ImageView
+                android:id="@+id/photonya1"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_weight="100"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/noimage" />
+
+
+        </LinearLayout>
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
             >
 
 
@@ -206,13 +231,57 @@
                 style="@style/Widget.AppCompat.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:maxLines="1"
                 android:padding="20dp"
                 android:hint="FotoKTP"
+
                 />
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            >
+
+
+
+            <ImageView
+                android:id="@+id/photonya2"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_weight="100"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/noimage" />
+
+
+        </LinearLayout>
+
+
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            >
+
+
+            <EditText
+                android:id="@+id/FotoKTP2"
+                style="@style/Widget.AppCompat.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:hint="FotoKTP Lagi"
+                android:maxLines="1"
+                />
+
+        </LinearLayout>
 
 
         <LinearLayout
@@ -222,24 +291,27 @@
             >
 
 
-            <EditText
-                android:id="@+id/FotoKTP2"
-                style="@style/Widget.AppCompat.EditText"
+
+            <ImageView
+                android:id="@+id/photonya3"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:padding="20dp"
-                android:hint="FotoKTP Lagi"
-                />
+                android:layout_height="250dp"
+                android:layout_weight="100"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/noimage" />
+
 
         </LinearLayout>
+
+
 
 
 
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/lnPas"
                 android:layout_marginBottom="20dp"
                 >
 
@@ -255,6 +327,27 @@
                     android:text=""
                     />
             </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            >
+
+            <EditText
+                android:id="@+id/password_lagi"
+                style="@style/Widget.AppCompat.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Ulangi Password"
+                android:inputType="textPassword"
+                android:padding="20dp"
+                android:text=""
+                />
+        </LinearLayout>
 
 
         <LinearLayout

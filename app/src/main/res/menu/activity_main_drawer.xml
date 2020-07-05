@@ -10,57 +10,33 @@
 
 
         <item
-            android:id="@+id/nav_interface"
+            android:id="@+id/nav_history_menunggu"
             android:icon="@drawable/ic_menu_send"
-            android:title="Go Absensi" />
+            android:title="Pesanan Menunggu" />
 
         <item
-            android:id="@+id/nav_history_absen"
+            android:id="@+id/nav_history_diterima"
             android:icon="@drawable/ic_menu_send"
-            android:title="History Absensi" />
-
-
-        <item
-            android:id="@+id/nav_lap_sibahanpe"
-            android:icon="@drawable/ic_menu_send"
-            android:title="Laporan TPP" />
+            android:title="Pesanan Diproses" />
 
 
         <item
-            android:id="@+id/nav_dinas_luar"
+            android:id="@+id/nav_history_dikirim"
             android:icon="@drawable/ic_menu_send"
-            android:title="Dinas Luar" />
+            android:title="Pesanan Dikirim" />
 
 
         <item
-            android:id="@+id/nav_cuti_sakit"
+            android:id="@+id/nav_history_selesai"
             android:icon="@drawable/ic_menu_send"
-            android:title="Cuti Sakit/Sakit" />
+            android:title="Pesanan Selesai" />
 
 
         <item
-            android:id="@+id/nav_cuti_lain"
+            android:id="@+id/nav_history_ditolak"
             android:icon="@drawable/ic_menu_send"
-            android:title="Cuti Alasan Penting" />
+            android:title="Pesanan Ditolak" />
 
-
-
-        <item
-            android:id="@+id/nav_ket_sah"
-            android:icon="@drawable/ic_menu_send"
-            android:title="Ijin Ket.Sah" />
-
-
-        <item
-            android:id="@+id/nav_cuti_tahunan"
-            android:icon="@drawable/ic_menu_send"
-            android:title="Cuti Tahunan" />
-
-
-        <item
-            android:id="@+id/nav_sibahanpe"
-            android:icon="@drawable/ic_menu_send"
-            android:title="Alternative" />
 
     </group>
 

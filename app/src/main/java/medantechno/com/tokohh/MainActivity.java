@@ -16,12 +16,14 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
@@ -41,7 +43,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,8 +79,10 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -87,9 +93,11 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import medantechno.com.tokohh.adapter.AdapterMenu;
 import medantechno.com.tokohh.config.Config;
 import medantechno.com.tokohh.database.DbLokasi;
 import medantechno.com.tokohh.model.ModelLokasi;
+import medantechno.com.tokohh.model.ModelMenu;
 import medantechno.com.tokohh.model.ModelUser;
 
 public class MainActivity extends AppCompatActivity
@@ -127,8 +135,17 @@ public class MainActivity extends AppCompatActivity
 
     String all_haram;
     List<String> haram = new ArrayList<>();
+    SharedPreferences preferences;
 
     List<String> gpsBawaan = new ArrayList<>();
+
+    TextView MENUNGGU,DITERIMA,DIKIRIM;
+    SwipeRefreshLayout swipe;
+    String IdPengguna;
+
+    EditText pencarian;
+    Button btn_go_cari;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,6 +165,71 @@ public class MainActivity extends AppCompatActivity
         */
 
 
+        /***** mengambil session ***/
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String NoTelp = preferences.getString("NoTelp", "");
+         IdPengguna= preferences.getString("UserID","");
+
+        if(NoTelp.equals(""))
+        {
+            Intent directLogin = new Intent(getApplicationContext(), Login.class);
+            startActivity(directLogin);
+            finish();
+        }
+        /***** mengambil session ***/
+
+        /******* auto refresh **********/
+        badge_pesanan(IdPengguna);
+        final Handler handlerBadge = new Handler();
+        Runnable refreshBadge = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("delay");
+                /******* action disini nanti************/
+                badge_pesanan(IdPengguna);
+                /******* action disini nanti************/
+                handlerBadge.postDelayed(this, 50000);//10 detik
+            }
+        };
+        handlerBadge.postDelayed(refreshBadge, 50000);//10 detik
+        /***** auto refresh **********/
+
+
+
+
+        MENUNGGU = findViewById(R.id.MENUNGGU);
+        DIKIRIM = findViewById(R.id.DIKIRIM);
+        DITERIMA = findViewById(R.id.DITERIMA);
+
+        MENUNGGU.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent go_menunggu = new Intent(MainActivity.this,HistoryActivity.class);
+                go_menunggu.putExtra("STATUS","MENUNGGU");
+                startActivity(go_menunggu);
+            }
+        });
+
+        DIKIRIM.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent go_dikirim = new Intent(MainActivity.this,HistoryActivity.class);
+                go_dikirim.putExtra("STATUS","DIKIRIM");
+                startActivity(go_dikirim);
+            }
+        });
+
+        DITERIMA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent go_diterima = new Intent(MainActivity.this,HistoryActivity.class);
+                go_diterima.putExtra("STATUS","DITERIMA");
+                startActivity(go_diterima);
+            }
+        });
+
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -158,43 +240,25 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        Button btnSpt = (Button)findViewById(R.id.btnAbsensi);
-        btnSpt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent go_List = new Intent(MainActivity.this,InterfaceKamera.class);
-                startActivity(go_List);
-            }
-        });
-
 
         View headerView = navigationView.getHeaderView(0);
         TextView namanya = (TextView) headerView.findViewById(R.id.v_nama);
-        namanya.setText(nama);
-
-        TextView mNama = (TextView) findViewById(R.id.mNama);
-        mNama.setText(nama);
+        namanya.setText(preferences.getString("Nama",""));
 
         TextView NIPnya = (TextView) headerView.findViewById(R.id.v_NIP);
-        NIPnya.setText(NIP);
+        NIPnya.setText(preferences.getString("NoTelp",""));
 
-        TextView mNIP = (TextView) findViewById(R.id.mNIP);
-        mNIP.setText(NIP);
 
         ImageView imageView = (ImageView) headerView.findViewById(R.id.imageView);
-        ImageView logonya = (ImageView) findViewById(R.id.logonya);
 
         try {
 
-            File imgFile = new File(gambar);
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            Picasso.with(getApplicationContext()).load(Config.StringUrl.base_gambar+preferences.getString("Foto","")).into(imageView);
 
-            imageView.setImageBitmap(myBitmap);
-            logonya.setImageBitmap(myBitmap);
 
         }catch (Exception e)
         {
-            System.out.println(gambar+"-gambar:"+e.toString());
+            System.out.println("-gambar:"+e.toString());
         }
 
 
@@ -210,10 +274,144 @@ public class MainActivity extends AppCompatActivity
         startLocationButtonClick();
         /************************* atribut fused lokasi ***************************/
 
+        listData();
+        try {
+
+            swipe = findViewById(R.id.swipe);
+            swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    listData();
+                    swipe.setRefreshing(false);
+                }
+            });
+
+        }catch (Exception e)
+        {
+            System.out.println(e);
+        }
+
+        pencarian=findViewById(R.id.pencarian);
+        btn_go_cari = findViewById(R.id.btn_go_cari);
+        btn_go_cari.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String key = pencarian.getText().toString();
+                Intent i = new Intent(MainActivity.this,CariActivity.class);
+                i.putExtra("key",key);
+                startActivity(i);
+            }
+        });
+
+    }
+
+    private void badge_pesanan(String IdPengguna)
+    {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JsonArrayRequest sptRequest = new JsonArrayRequest(Config.StringUrl.count_history+IdPengguna,new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("Hasil_count_history", response.toString());
+                try {
+                    JSONObject obj = response.getJSONObject(0);
+                    MENUNGGU.setText("Menunggu : "+obj.getString("MENUNGGU"));
+                    DITERIMA.setText("Diproses : "+obj.getString("DITERIMA"));
+                    DIKIRIM.setText("Dikirim : "+obj.getString("DIKIRIM"));
+
+                }catch (Exception e)
+                {
+
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Hasil_count_history:"+error.toString()+"-"+Config.StringUrl.count_history+preferences.getString("UserId",""));
+
+            }
+        });
+        queue.add(sptRequest);
+    }
+
+    private void listData()
+    {
+
+        ListView listRekomendasi = (ListView)findViewById(R.id.listRekomendasi);
+        final List<ModelMenu> modelMenuList = new ArrayList<ModelMenu>();
+        final AdapterMenu adapterMenu = new AdapterMenu(this,modelMenuList);
+        listRekomendasi.setAdapter(adapterMenu);
+
+        pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        pDialog.show();
+        modelMenuList.clear();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JsonArrayRequest sptRequest = new JsonArrayRequest(Config.StringUrl.list_menu,new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("Hasil", response.toString());
+                hidePDialog();
+
+                // Parsing json
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+
+                        JSONObject obj = response.getJSONObject(i);
+
+                        ModelMenu modelMenu = new ModelMenu();
+
+                        modelMenu.setIdMenu(obj.getString("IdMenu"));
+                        modelMenu.setIdResto(obj.getString("IdResto"));
+                        modelMenu.setMenu(obj.getString("Menu"));
+                        modelMenu.setDeskripsi(obj.getString("Deskripsi"));
+                        modelMenu.setHarga(obj.getString("Harga"));
+                        modelMenu.setIsTersedia(obj.getString("IsTersedia"));
+                        modelMenu.setIsAktif(obj.getString("IsAktif"));
+                        modelMenu.setFileGambar(obj.getString("FileGambar"));
+                        modelMenu.setIdPemilik(obj.getString("IdPemilik"));
+                        modelMenu.setNama(obj.getString("Nama"));
+                        modelMenu.setAlamat(obj.getString("Alamat"));
+                        modelMenu.setLat(obj.getString("Lat"));
+                        modelMenu.setLong(obj.getString("Long"));
+                        modelMenu.setIsHalal(obj.getString("IsHalal"));
+                        modelMenu.setIsBuka(obj.getString("IsBuka"));
 
 
 
+                        modelMenuList.add(modelMenu);
+                        adapterMenu.notifyDataSetChanged();
 
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+
+                hidePDialog();
+
+                Toast.makeText(getApplicationContext(),"Offline Mode. No inet.."+error.toString(),Toast.LENGTH_SHORT).show();
+                System.out.println(error.toString());
+
+
+            }
+        });
+
+        queue.add(sptRequest);
+        adapterMenu.notifyDataSetChanged();
 
     }
 
@@ -262,45 +460,32 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_history_absen) {
-            // Handle the camera action
+        if (id == R.id.nav_history_menunggu) {
+            Intent go_menunggu = new Intent(MainActivity.this,HistoryActivity.class);
+            go_menunggu.putExtra("STATUS","MENUNGGU");
+            startActivity(go_menunggu);
 
-
-
-        } else if (id == R.id.nav_interface) {
-            Intent go_cam = new Intent(getApplicationContext(),InterfaceKamera.class);
-            startActivity(go_cam);
-            System.out.println("Abc");
+        } else if (id == R.id.nav_history_diterima) {
+            Intent go_diterima = new Intent(getApplicationContext(),HistoryActivity.class);
+            go_diterima.putExtra("STATUS","DITERIMA");
+            startActivity(go_diterima);
         }
-        else if (id == R.id.nav_sibahanpe) {
-
+        else if (id == R.id.nav_history_dikirim) {
+            Intent go_dikirim = new Intent(getApplicationContext(),HistoryActivity.class);
+            go_dikirim.putExtra("STATUS","DIKIRIM");
+            startActivity(go_dikirim);
         }
-        else if (id == R.id.nav_lap_sibahanpe) {
-
-        }
-
-        else if (id == R.id.nav_dinas_luar) {
-
-        }
-
-        else if (id == R.id.nav_cuti_sakit) {
-
+        else if (id == R.id.nav_history_selesai) {
+            Intent go_selesai = new Intent(getApplicationContext(),HistoryActivity.class);
+            go_selesai.putExtra("STATUS","SELESAI");
+            startActivity(go_selesai);
         }
 
-        else if (id == R.id.nav_cuti_lain) {
-
+        else if (id == R.id.nav_history_ditolak) {
+            Intent go_ditolak = new Intent(getApplicationContext(),HistoryActivity.class);
+            go_ditolak.putExtra("STATUS","DITOLAK");
+            startActivity(go_ditolak);
         }
-        else if (id == R.id.nav_ket_sah) {
-
-        }
-
-        else if (id == R.id.nav_cuti_tahunan) {
-
-        }
-
-
-
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -375,7 +560,7 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG,"lng:"+mCurrentLocation.getLongitude());
             Log.d(TAG,"Last updated on: " + mLastUpdateTime);
 
-            webviewku(Config.StringUrl.cek_visual+"?lat="+mCurrentLocation.getLatitude()+"&lng="+mCurrentLocation.getLongitude()+"&nip="+NIP+"&id_opd="+id_opd);
+            //webviewku(Config.StringUrl.cek_visual+"?lat="+mCurrentLocation.getLatitude()+"&lng="+mCurrentLocation.getLongitude()+"&nip="+NIP+"&id_opd="+id_opd);
 
             Date cDate = new Date();
             String fDate = new SimpleDateFormat("yyyy-MM-dd").format(cDate);

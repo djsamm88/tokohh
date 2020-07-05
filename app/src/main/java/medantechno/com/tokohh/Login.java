@@ -54,10 +54,7 @@ public class Login extends Activity {
 
         /***** mengambil session ***/
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String UserName = preferences.getString("UserID", "");
         String NoTelp = preferences.getString("NoTelp", "");
-        System.out.println("isi_session:"+UserName+"-"+NoTelp);
-        /***** mengambil session ***/
 
         if(!NoTelp.equals(""))
         {
@@ -65,6 +62,9 @@ public class Login extends Activity {
             startActivity(directHome);
             finish();
         }
+
+        /***** mengambil session ***/
+
 
         mBtnGo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +126,7 @@ public class Login extends Activity {
                         editor.putString("UserID",hasil.getString("UserID"));
                         editor.putString("Password",hasil.getString("Password"));
                         editor.putString("RoleID",hasil.getString("RoleID"));
-                        editor.putString("LasLogin",hasil.getString("LasLogin"));
+                        editor.putString("LastLogin",hasil.getString("LastLogin"));
                         editor.putString("IsSuspend",hasil.getString("IsSuspend"));
                         editor.putString("Email",hasil.getString("Email"));
                         editor.putString("Nama",hasil.getString("Nama"));

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:focusableInTouchMode="true"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:weightSum="9"
+
+        >
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:id="@+id/imageMenu"
+            android:src="@drawable/noimage"
+            android:scaleType="centerCrop"
+            />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:padding="5dp"
+            android:orientation="vertical"
+            android:weightSum="10"
+            >
+
+            <TextView
+                android:id="@+id/CreatedOn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2020-02-02 :02:02:02"
+                android:textStyle="italic"
+                android:textSize="10dp"
+                />
+            <TextView
+                android:id="@+id/NamaResto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="KFC"
+                android:textStyle="bold"
+                android:textSize="14dp"
+                />
+
+            <TextView
+                android:id="@+id/AlamatResto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Alamat Resto"
+                android:textStyle="bold"
+                android:textSize="14dp"
+                />
+
+            <TextView
+                android:id="@+id/BiayaKirim"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="BiayaKirim : Rp.10.000"
+                android:textStyle="bold"
+                android:textSize="13dp"
+                android:textColor="#3F51B5"
+                />
+
+            <TextView
+                android:id="@+id/BiayaTotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="BiayaTotal : Rp.10.000"
+                android:textStyle="bold"
+                android:textSize="14dp"
+                android:textColor="#3F51B5"
+                />
+
+            <TextView
+                android:id="@+id/Status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DIPROSES"
+                android:textStyle="bold"
+                android:textSize="14dp"
+                android:textColor="#009688"
+                />
+
+
+
+            <TextView
+                android:id="@+id/NamaDriver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="NamaDriver : "
+                android:textStyle="bold"
+                android:textSize="13dp"
+                />
+
+
+            <TextView
+                android:id="@+id/NoHpDriver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="NoHpDriver : 0812312"
+                android:textStyle="bold"
+                android:textSize="13dp"
+                />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="9">
+
+        <Button
+            android:id="@+id/Detail"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="Detail"
+            android:textSize="12dp"
+            />
+
+        <Button
+            android:id="@+id/HubDriver"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:textSize="12dp"
+            android:text="Hub Driver" />
+
+        <Button
+            android:id="@+id/HubPenjual"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="Hub Penjual"
+            android:textSize="12dp"
+            />
+
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="9">
+
+        <Button
+            android:id="@+id/Selesai"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:text="Selesai" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
